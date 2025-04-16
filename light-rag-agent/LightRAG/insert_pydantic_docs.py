@@ -10,9 +10,10 @@ import httpx
 # neo4j
 BATCH_SIZE_NODES = 500
 BATCH_SIZE_EDGES = 100
-os.environ["NEO4J_URI"] = "neo4j+s://8767581d-ac50-445d-8bbd-b24002a3e3aa.databases.neo4j.io"
+os.environ["NEO4J_URI"] = "neo4j+s://aa17251b.databases.neo4j.io"
 os.environ["NEO4J_USERNAME"] = "neo4j"
 os.environ["NEO4J_PASSWORD"] = "8e09oKdx2zq2e5WLUR5xPmB88GFk7CW36yhowVod8Uk"
+os.environ["NEO4J_DATABASE"] = "neo4j" # Explicitly use the default database
 
 # Load environment variables from .env file
 dotenv.load_dotenv()
