@@ -5,6 +5,7 @@ import sys
 import argparse
 from dataclasses import dataclass
 import asyncio
+from typing import Any, Union  # Added Union for Python 3.9 compatibility
 
 import dotenv
 from pydantic_ai import RunContext
@@ -75,7 +76,7 @@ async def retrieve(context: RunContext[RAGDeps], search_query: str) -> str:
     )
 
 
-async def run_rag_agent(question: str,) -> str:
+async def run_rag_agent(question: str) -> str:  # Removed trailing comma for Python 3.9 compatibility
     """Run the RAG agent to answer a question about Pydantic AI.
     
     Args:

@@ -54,7 +54,7 @@ The primary goal of this project is to showcase the power and efficiency of Ligh
 
 ### LightRAG (Most Powerful)
 
-1. **Insert Documentation** (this will take a while - using full Pydantic AI docs as an example!):
+1. **Insert Documentation** (this will take a while (up to 20 mins) - using full Pydantic AI docs as an example!):
    ```bash
    cd LightRAG
    python insert_pydantic_docs.py

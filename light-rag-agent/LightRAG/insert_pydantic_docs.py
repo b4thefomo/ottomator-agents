@@ -1,10 +1,18 @@
 import os
 import asyncio
+from typing import Any, Optional
 from lightrag import LightRAG
 from lightrag.llm.openai import gpt_4o_mini_complete, openai_embed
 from lightrag.kg.shared_storage import initialize_pipeline_status
 import dotenv
 import httpx
+
+# neo4j
+BATCH_SIZE_NODES = 500
+BATCH_SIZE_EDGES = 100
+os.environ["NEO4J_URI"] = "neo4j+s://8767581d-ac50-445d-8bbd-b24002a3e3aa.databases.neo4j.io"
+os.environ["NEO4J_USERNAME"] = "neo4j"
+os.environ["NEO4J_PASSWORD"] = "8e09oKdx2zq2e5WLUR5xPmB88GFk7CW36yhowVod8Uk"
 
 # Load environment variables from .env file
 dotenv.load_dotenv()
@@ -31,23 +39,35 @@ def fetch_pydantic_docs() -> str:
         raise Exception(f"Error fetching Pydantic AI documentation: {e}")
 
 
-async def initialize_rag():
+async def async_main():
+    # Initialize RAG instance and insert Pydantic documentation
+    print("Initializing RAG system...")
     rag = LightRAG(
         working_dir=WORKING_DIR,
         embedding_func=openai_embed,
-        llm_model_func=gpt_4o_mini_complete
+        llm_model_func=gpt_4o_mini_complete,
+        graph_storage="Neo4JStorage",
     )
 
+    print("Initializing storage...")
     await rag.initialize_storages()
     await initialize_pipeline_status()
-
+    
+    print("Fetching documentation...")
+    docs = fetch_pydantic_docs()
+    
+    print("Inserting documentation into RAG system...")
+    await rag.ainsert(docs)  # Use ainsert instead of insert
+    
+    print("Successfully inserted Pydantic documentation into the RAG system.")
     return rag
 
 
 def main():
-    # Initialize RAG instance and insert Pydantic documentation
-    rag = asyncio.run(initialize_rag())
-    rag.insert(fetch_pydantic_docs())
+    print("Starting Pydantic documentation ingestion process...")
+    asyncio.run(async_main())
+    print("Done! The RAG system is ready to use.")
+
 
 if __name__ == "__main__":
     main()
