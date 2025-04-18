@@ -23,14 +23,25 @@ from lightrag.kg.shared_storage import initialize_pipeline_status
 
 from rag_agent import agent, RAGDeps
 
+
 load_dotenv()
+# Neo4j configuration should come from .env file
+# If you need to set them manually, do it only if they're not already set
+if "NEO4J_URI" not in os.environ:
+    os.environ["NEO4J_URI"] = "neo4j+s://aa17251b.databases.neo4j.io"
+if "NEO4J_USERNAME" not in os.environ:
+    os.environ["NEO4J_USERNAME"] = "neo4j"
+if "NEO4J_PASSWORD" not in os.environ:
+    os.environ["NEO4J_PASSWORD"] = "8e09oKdx2zq2e5WLUR5xPmB88GFk7CW36yhowVod8Uk"
+if "NEO4J_DATABASE" not in os.environ:
+    os.environ["NEO4J_DATABASE"] = "neo4j"
 
 async def get_agent_deps():
     """
     Creates a LightRAG instance
     And then uses that to create the Pydantic AI agent dependencies.
     """
-    WORKING_DIR = "./pydantic-docs"
+    WORKING_DIR = "./neo4j-docs"  # Use the same working directory as insert_neo4j_docs.py
 
     if not os.path.exists(WORKING_DIR):
         os.mkdir(WORKING_DIR)
@@ -38,10 +49,12 @@ async def get_agent_deps():
     rag = LightRAG(
         working_dir=WORKING_DIR,
         embedding_func=openai_embed,
-        llm_model_func=gpt_4o_mini_complete
+        llm_model_func=gpt_4o_mini_complete,
+        graph_storage="Neo4JStorage"  # Explicitly use Neo4JStorage
     )
 
     await rag.initialize_storages()
+    await initialize_pipeline_status()  # Initialize the pipeline status (needed for Neo4j)
     deps = RAGDeps(lightrag=rag)
     return deps
 
